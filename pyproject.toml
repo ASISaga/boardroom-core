@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=75.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "boardroom-core"
+version = "0.1.0"
+description = "Wire contracts (Envelope, Evt, Digest) shared by Boardroom's Function app (F) and Foundry orchestration container (O)"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+requires-python = ">=3.11,<3.13"
+
+# Pinned per .github/specs/10-dependency-lock.md.
+dependencies = [
+    "jsonschema>=4.20,<5.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+]
+
+[tool.setuptools]
+packages = ["boardroom_core"]
+
+# This pyproject.toml sits inside boardroom_core/ itself (flat layout, not
+# src/); the package's own .py files (__init__.py, envelope.py, evt.py,
+# schemas.py) are siblings of this file, not in a nested boardroom_core/
+# subdirectory. "." therefore correctly maps the "boardroom_core" import
+# package to this directory — verified via `pip install -e ./boardroom_core`.
+[tool.setuptools.package-dir]
+boardroom_core = "."
+
+[project.urls]
+Homepage = "https://github.com/ASISaga/boardroom"
+Repository = "https://github.com/ASISaga/boardroom"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
