@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  ci:
+    permissions:
+      contents: read
+    uses: ASISaga/aos-infra/.github/workflows/ci-reusable.yml@main
+    with:
+      package_dir: "<<PACKAGE_DIR e.g. purpose_driven_agent>>"
+      platform_import_checks: |
+        import agent_framework
+        from azure.identity import DefaultAzureCredential
+    secrets:
+      AOS_INFRA_READ_TOKEN: ${{ secrets.AOS_INFRA_READ_TOKEN }}
