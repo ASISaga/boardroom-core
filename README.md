@@ -10,15 +10,15 @@ Packaged independently (own `pyproject.toml`) so it can be installed on its
 own by either consumer. See `.github/specs/20-repository-topology.md` for the
 repository-split plan this package layout is groundwork for.
 
-## Install (editable, from a checkout of the `boardroom` repo)
+## Install (editable, from a checkout of the repo)
 
 ```bash
-pip install -e ./boardroom_core
+pip install -e .
 ```
 
 ## Test
 
 ```bash
-pip install -e "./boardroom_core[dev]"
-pytest boardroom_core/tests -q
+pip install -e ".[dev]"
+pytest -q
 ```
