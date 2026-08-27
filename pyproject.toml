@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=75.0.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling>=1.25.0"]
+build-backend = "hatchling.build"
 
 [project]
 name = "boardroom-core"
@@ -21,21 +21,22 @@ dev = [
     "pytest-asyncio>=0.24.0",
 ]
 
-[tool.setuptools]
-packages = ["boardroom_core"]
-
-# This pyproject.toml sits inside boardroom_core/ itself (flat layout, not
-# src/); the package's own .py files (__init__.py, envelope.py, evt.py,
-# schemas.py) are siblings of this file, not in a nested boardroom_core/
-# subdirectory. "." therefore correctly maps the "boardroom_core" import
-# package to this directory — verified via `pip install -e ./boardroom_core`.
-[tool.setuptools.package-dir]
-boardroom_core = "."
-
 [project.urls]
 Homepage = "https://github.com/ASISaga/boardroom"
 Repository = "https://github.com/ASISaga/boardroom"
 
+[tool.hatch.build.targets.wheel]
+packages = ["src/boardroom_core"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src/boardroom_core",
+    "/tests",
+    "/README.md",
+    "/LICENSE",
+]
+
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+pythonpath = ["src"]
 testpaths = ["tests"]
