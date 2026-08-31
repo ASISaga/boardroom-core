@@ -1,0 +1,49 @@
+name: Build Boardroom Core
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "boardroom_core/**"
+      - ".github/workflows/build-boardroom-core.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: boardroom-core-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    permissions:
+      id-token: write
+      contents: read
+    uses: ASISaga/aos-infra/.github/workflows/aos-agent-build.yml@main
+    with:
+      # boardroom-core has no upstream aos-infra-chain parent of its own —
+      # it's a peer source alongside founder/cfo/cmo-agent and aos-kernel,
+      # consumed directly by boardroom-orchestration's build, not layered
+      # beneath any of them. Builds fresh from aos/python-base rather than
+      # rebasing on anything, so trigger is always source-change here —
+      # there is no "rebase" concept for a repo with no single parent to
+      # rebase against.
+      trigger:             "source-change"
+      layer_number:        "1"
+      layer_name:          "boardroom-core"
+      image:               "aos/boardroom-core"
+      parent_image:        "${{ vars.AOS_PYTHON_BASE_IMAGE }}"
+      package_dir:         "boardroom_core"
+      repo_name:           "ASISaga/boardroom-core"
+      src_path:            "boardroom_core"
+      # No downstream_repos here, deliberately: boardroom-orchestration
+      # resolves boardroom-core's current digest live at its own build
+      # time (same as the other five parallel sources), rather than
+      # trusting whatever digest happens to ride along in a dispatch
+      # payload — the single-parent dispatch shape this reusable workflow
+      # provides doesn't fit a six-way convergent build, so
+      # boardroom-orchestration's own workflow does its own resolution
+      # instead of relying on this input.
+    secrets:
+      AZURE_CLIENT_ID:       ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID:       ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AOS_INFRA_READ_TOKEN:  ${{ secrets.AOS_INFRA_READ_TOKEN }}
